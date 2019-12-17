@@ -1,7 +1,10 @@
 const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
-// const cors = require('cors');
+const knexSessionStore = require('connect-session-knex')(session);
+const cors = require('cors');
+
+const knex = require('../database/dbConfig');
 
 const sessionConfig = {
     name: 'monkey', // sid
@@ -13,11 +16,18 @@ const sessionConfig = {
     },
     resave: false,
     saveUninitialized: false,
+    store: new knexSessionStore({
+        knex,
+        createtable: true,
+        tablename: 'sessions',
+        sidfieldname: 'sid',
+        clearInterval: 1000 * 60 * 10,
+    })
 };
 
 module.exports = server => {
     server.use(helmet());
     server.use(express.json());
     server.use(session(sessionConfig));
-    //   server.use(cors());
+    server.use(cors());
 };
