@@ -8,7 +8,7 @@ module.exports = {
 };
 
 function getUsers() {
-    return db("users").select("id", "username");
+    return db("users").select("id", "username").orderBy("id");
 }
 
 function getUsersBy(filter) {
